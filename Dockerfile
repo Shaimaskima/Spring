@@ -1,4 +1,4 @@
 FROM openjdk:8-jdk-alpine
 EXPOSE 8089
-ADD target/my-app-1.jar my-app-1.jar
-ENTRYPOINT ["java","-jar","/my-app-1.jar"]
+ADD target/tpAchatProject-1.0.jar tpAchatProject-1.0.jar
+ENTRYPOINT ["java","-jar","/tpAchatProject-1.0.jar"]
