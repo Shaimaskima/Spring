@@ -1,55 +1,73 @@
 pipeline {
+    environment{
+    registry="kacemch/kacem"
+    registryCredential='83ffc7a1-192e-4250-8139-f45ffdc2bf97'
+    dokerImage="devops_esprit"
+}
     agent any
-     environment {
-        NEXUS_VERSION = "nexus3"
-        NEXUS_PROTOCOL = "http"
-        NEXUS_URL = "192.168.56.10:8081"
-        NEXUS_REPOSITORY = "my-app"
-        VERSION = "1.0-SNAPSHOT"
-        NEXUS_CREDENTIAL_ID = "f3148557-fc2c-4b43-9630-0baa29917de9"
-    }
     stages {
-        stage('Cloning project') {
+        stage('Cloning the project') {
             steps {
-                // Get some code from a GitHub repository
-                git branch: 'main', credentialsId: '917c9acc-ac4d-4111-9e91-73428fd9539e', url: 'https://github.com/Shaimaskima/Spring.git/'
+                // clone from git and test trigger
+                git branch: 'main', credentialsId: '15abb24f-d15c-4109-b679-858a4caa469f', url: 'https://github.com/kacemch/Devops_kacem.git'
                 echo "-------------------Clone Stage Done ------------------------------- "
             }
         }
-        stage("MAVEN CLEAN") {
+        stage("clean"){
             steps {
                 script {
-                    sh "mvn -X -Dmaven.test.failure.ignore=true clean"
+                    sh "mvn -Dmaven.test.failure.ignore=true clean"
                 }
             }
         }
-        stage("MAVEN COMPILE") {
+        stage("compile") {
             steps {
                 script {
-                    sh "mvn -X -Dmaven.test.failure.ignore=true compile"
+                    sh "mvn -Dmaven.test.failure.ignore=true compile"
                 }
             }
         }
-        stage("MAVEN TEST") {
+        stage("test") {
             steps {
                 script {
                     sh "mvn -Dmaven.test.failure.ignore=true test"
                 }
             }
         }
-        stage("MAVEN BUILD") {
+        stage("build") {
             steps {
                 script {
                     sh "mvn -Dmaven.test.failure.ignore=true clean package"
                 }
             }
         }
-        stage('MAVEN BUILD & DEPLOY TO NEXUS REPO') {
-            steps {
-                echo 'Hello World'
-                nexusArtifactUploader artifacts: [[artifactId: 'tpAchatProject', classifier: '', file: 'target/tpAchatProject-1.0.jar', type: 'jar']], credentialsId: 'c4e9649d-5f97-4f24-9ced-184dbd641c2d', groupId: 'com.esprit.examen', nexusUrl: '192.168.56.11:8081/repository/maven-releases/', nexusVersion: 'nexus3', protocol: 'http', repository: 'nexusdeploymentrepo', version: '1.0'
-            }
+        stage("docker build") {
+                       steps{
+                         script {
+                            dockerImage = docker.build registry +":$BUILD_NUMBER"
+                       }
+                 }
+       }
+        
+        stage("docker push") {
+              steps{
+                 script {
+                 withDockerRegistry(credentialsId: registryCredential) {
+                  dockerImage.push()
+                  }
+                }
+           }
         }
+        stage('Cleaning up') {
+             steps{
+             sh "docker rmi $registry:$BUILD_NUMBER"
+        }
+    }
+    stage('running containers'){
+        steps{
+            sh 'docker-compose up -d'
+        }
+    }
         
     }    
 
