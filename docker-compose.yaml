@@ -2,7 +2,7 @@ version: '3.3'
 services:
   database:
     image: mysql:5.7
-    container_name: devops_mysql
+    container_name: cd_mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: devops
@@ -12,8 +12,8 @@ services:
       - 3306:3306
 
   spring-boot:
-    image: kacemch/kacem:41
-    container_name: devops_esprit
+    image: chaimask/chaima:69
+    container_name: cd_spring
     ports:
       - 8089:8089
     depends_on:
