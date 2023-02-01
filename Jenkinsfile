@@ -1,8 +1,8 @@
 pipeline {
     environment{
-    registry="kacemch/kacem"
-    registryCredential='83ffc7a1-192e-4250-8139-f45ffdc2bf97'
-    dokerImage="devops_esprit"
+    registry="chaimask/chaima"
+    registryCredential='e1451ab0-a0bb-45c5-9f5c-c30f0b267fbb'
+    dokerImage="devops_container"
 }
     agent any
     stages {
