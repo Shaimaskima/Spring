@@ -9,7 +9,7 @@ services:
     volumes:
       - /home/mysql/data:/var/lib/mysql
     ports:
-      - 3306:8888
+      - 8888:8888
 
   spring-boot:
     image: chaimask/chaima:69
