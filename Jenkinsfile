@@ -63,11 +63,7 @@ pipeline {
              sh "docker rmi $registry:$BUILD_NUMBER"
         }
     }
-    stage('running containers'){
-        steps{
-            sh 'docker-compose up -d'
-        }
-    }
+    
         
     }    
 
